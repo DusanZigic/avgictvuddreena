@@ -35,7 +35,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 		inputParams[key] = val;
 	}
 	
-	std::vector<std::string> arguments = {"collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT", "config", "h"};
+	std::vector<std::string> arguments = {"modelDir", "collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT", "config", "h"};
 	for (const auto &inputParam : inputParams) {
 		if(std::find(arguments.begin(), arguments.end(), inputParam.first) == arguments.end()) {
 			std::cerr << "Error: provide argument flag: " << inputParam.first << " is not an option." << std::endl;
@@ -53,7 +53,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 			m_error = true;
 		}
 	}
-	std::vector<std::string> argumentsFile = {"collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT"};
+	std::vector<std::string> argumentsFile = {"modelDir", "collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT"};
 	for (const auto &inputParam : inputParamsFile) {
 		if(std::find(argumentsFile.begin(), argumentsFile.end(), inputParam.first) == argumentsFile.end()) {
 			std::cerr << "Error: in configration file provided argument: '" << inputParam.first << "' is not an option." << std::endl;
@@ -62,6 +62,15 @@ energyLoss::energyLoss(int argc, const char *argv[])
 			m_error = true;
 		}
 	}
+
+	if ((inputParams.count("modelDir") == 0) && (inputParamsFile.count("modelDir") == 0)) {
+		std::cerr << "Error: modle directory path parameter must be provided. Aborting..." << std::endl;
+		m_error = true;
+	}
+	else {
+		if (inputParamsFile.count("modelDir") > 0) m_modelDir = inputParamsFile.at("modelDir");
+		if (    inputParams.count("modelDir") > 0) m_modelDir =     inputParams.at("modelDir");
+		if (m_modelDir.back() != '/') m_modelDir += "/";
 
 	//setting parameter values based on config file values and overwriting with command line values:
 	//
@@ -188,7 +197,7 @@ double energyLoss::productLog(double x) const
 
 int energyLoss::loaddsdpti2(const std::string &pname, interpolationF<double> &dsdpti2int)const 
 {
-	const std::string path_in = "./ptDists/ptDist" + m_sNN + "/ptDist_" + m_sNN + "_" + pname + ".dat";
+	const std::string path_in = m_modelDir + "ptDists/ptDist" + m_sNN + "/ptDist_" + m_sNN + "_" + pname + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -228,7 +237,7 @@ int energyLoss::loadLdndx()
 	std::stringstream xBss; xBss << std::fixed << std::setprecision(1) << m_xB;
 	std::stringstream nfss; nfss << std::fixed << std::setprecision(1) << m_nf;
 
-	const std::string path_in = "./ltables/ldndx_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
+	const std::string path_in = m_modelDir + "ltables/ldndx_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -281,7 +290,7 @@ int energyLoss::loadLNorm()
 	std::stringstream xBss; xBss << std::fixed << std::setprecision(1) << m_xB;
 	std::stringstream nfss; nfss << std::fixed << std::setprecision(1) << m_nf;
 
-	const std::string path_in = "./ltables/lnorm_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
+	const std::string path_in = m_modelDir + "ltables/lnorm_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -330,7 +339,7 @@ int energyLoss::loadLColl()
 
 	std::stringstream nfss; nfss << std::fixed << std::setprecision(1) << m_nf;
 
-	const std::string path_in = "./ltables/lcoll_nf=" + nfss.str() + "_" + partName + ".dat";
+	const std::string path_in = m_modelDir + "ltables/lcoll_nf=" + nfss.str() + "_" + partName + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -441,7 +450,7 @@ int energyLoss::loadBinCollDensity(interpolationF<double> &binCollDensity)
 
 int energyLoss::loadPhiPoints(std::vector<double> &phiPoints)
 {
-	std::string path_in = "./phiGaussPts/phiptsgauss" + std::to_string(m_phiGridN) + ".dat";
+	std::string path_in = m_modelDir + "phiGaussPts/phiptsgauss" + std::to_string(m_phiGridN) + ".dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open phi points file. Aborting..." << std::endl;

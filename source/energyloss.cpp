@@ -71,6 +71,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 		if (inputParamsFile.count("modelDir") > 0) m_modelDir = inputParamsFile.at("modelDir");
 		if (    inputParams.count("modelDir") > 0) m_modelDir =     inputParams.at("modelDir");
 		if (m_modelDir.back() != '/') m_modelDir += "/";
+	}
 
 	//setting parameter values based on config file values and overwriting with command line values:
 	//
@@ -378,7 +379,7 @@ int energyLoss::loadLColl()
 
 int energyLoss::loadBinCollDensity(interpolationF<double> &binCollDensity)
 {
-	std::string path_in = "binarycolldensities/binarycolldensity_cent=" + m_centrality + ".dat";
+	std::string path_in = "./bcdensity.dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open binary collision density file." << std::endl;
@@ -476,7 +477,7 @@ int energyLoss::loadPhiPoints(std::vector<double> &phiPoints)
 
 int energyLoss::loadBinCollPoints(std::vector<std::vector<double>> &bcPoints)
 {
-	std::string path_in = "binarycollpoints/binarycollpoints_cent=" + m_centrality + ".dat";
+	std::string path_in = "./bcpoints.dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open binary collision points file." << std::endl;
@@ -672,7 +673,7 @@ int energyLoss::generateInitPosPoints()
 
 int energyLoss::loadTempEvol()
 {
-	std::string path_in = "./evols/tempevol_cent=" + m_centrality + ".dat";
+	std::string path_in = "./tempevol.dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open temperature evolution file. Aborting..." << std::endl;

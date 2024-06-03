@@ -237,7 +237,7 @@ int energyLoss::loadLdndx()
 
 	const std::string path_in = m_modelDir + "ltables/ldndx_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
 
-	std::ifstream file_in(path_in);
+	std::ifstream file_in(path_in, std::ios::binary);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open Ldndx table file. Aborting..." << std::endl;
 		return -1;
@@ -290,7 +290,7 @@ int energyLoss::loadLNorm()
 
 	const std::string path_in = m_modelDir + "ltables/lnorm_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
 
-	std::ifstream file_in(path_in);
+	std::ifstream file_in(path_in, std::ios::binary);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open LNorm table file. Aborting..." << std::endl;
 		return -1;
@@ -339,7 +339,7 @@ int energyLoss::loadLColl()
 
 	const std::string path_in = m_modelDir + "ltables/lcoll_nf=" + nfss.str() + "_" + partName + ".dat";
 
-	std::ifstream file_in(path_in);
+	std::ifstream file_in(path_in, std::ios::binary);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open LColl table file. Aborting..." << std::endl;
 		return -1;
